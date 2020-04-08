@@ -9,36 +9,36 @@ using Microsoft.AspNet.OData.Routing;
 
 namespace AirVinyl.API.Controllers
 {
-	public class AirVinylController : ODataController
-	{
-		private AirVinylDbContext _ctx = new AirVinylDbContext();
+	//public class AirVinylController : ODataController
+	//{
+	//	private AirVinylDbContext _ctx = new AirVinylDbContext();
 
 
-		[HttpGet]
-		[ODataRoute("VinylRecords")]
-		public IHttpActionResult GetAllVinylsRecords()
-		{
-			return Ok(_ctx.VinylRecords);
-		}
+	//	[HttpGet]
+	//	[ODataRoute("VinylRecords")]
+	//	public IHttpActionResult GetAllVinylsRecords()
+	//	{
+	//		return Ok(_ctx.VinylRecords);
+	//	}
 
-		[HttpGet]
-		[ODataRoute("VinylRecords({key})")]
-		public IHttpActionResult Get(int key)
-		{
-			var record = _ctx.VinylRecords.FirstOrDefault(r => r.VinylRecordId == key);
-			if(record == null)
-			{
-				return NotFound();
-			}
+	//	[HttpGet]
+	//	[ODataRoute("VinylRecords({key})")]
+	//	public IHttpActionResult Get(int key)
+	//	{
+	//		var record = _ctx.VinylRecords.FirstOrDefault(r => r.VinylRecordId == key);
+	//		if(record == null)
+	//		{
+	//			return NotFound();
+	//		}
 
-			return Ok(record);
-		}
+	//		return Ok(record);
+	//	}
 
-		protected override void Dispose(bool disposing)
-		{
-			_ctx.Dispose();
+	//	protected override void Dispose(bool disposing)
+	//	{
+	//		_ctx.Dispose();
 			
-			base.Dispose(disposing);
-		}
-	}
+	//		base.Dispose(disposing);
+	//	}
+	//}
 }

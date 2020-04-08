@@ -74,8 +74,67 @@ namespace AirVinyl.API.Controllers
 		}
 
 		[HttpGet]
-		[ODataRoute("People({key})/Friends")]
+		[EnableQuery]
 		[ODataRoute("People({key})/VinylRecords")]
+		public IHttpActionResult GetVinylRecordsForPerson([FromODataUri] int key)
+		{
+			var person = _ctx.People.FirstOrDefault(p => p.PersonId == key);
+
+			if (person == null)
+				return NotFound();
+
+			return Ok(_ctx.VinylRecords.Where(v => v.Person.PersonId == key));
+		}
+
+
+		[HttpGet]
+		[EnableQuery]
+		[ODataRoute("People({key})/VinylRecords({recordId})")]
+		public IHttpActionResult GetVynilRecordForPerson([FromODataUri]int key, [FromODataUri]int recordId)
+		{
+			var person = _ctx.People.FirstOrDefault(p => p.PersonId == key);
+			if (person == null)
+				return NotFound();
+
+			var vinylRecords = _ctx.VinylRecords.Where(r => r.VinylRecordId == recordId && r.Person.PersonId == key);
+			if (!vinylRecords.Any())
+				return NotFound();
+
+			return Ok(SingleResult.Create(vinylRecords));
+		}
+
+		#region [VinylRecords]
+
+
+		[HttpPost]
+		[ODataRoute("People({key})/VinylRecords")]
+		public IHttpActionResult CreateVinylRecordForPerson([FromODataUri] int key, VinylRecord record)
+		{
+			if(!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			var person = _ctx.People.FirstOrDefault(p => p.PersonId == key);
+			if(person == null)
+			{
+				return NotFound();
+			}
+
+			record.Person = person;
+			_ctx.VinylRecords.Add(record);
+			_ctx.SaveChanges();
+
+			return Created(record);
+		}
+
+
+		#endregion
+
+		[EnableQuery]
+		[HttpGet]
+		[ODataRoute("People({key})/Friends")]
+		//[ODataRoute("People({key})/VinylRecords")]
 		public IHttpActionResult GetPersonCollectionProperty([FromODataUri] int key)
 		{
 			var segment = Url.Request.RequestUri.Segments.Last();

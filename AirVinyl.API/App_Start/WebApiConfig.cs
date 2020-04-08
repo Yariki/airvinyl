@@ -25,7 +25,7 @@ namespace AirVinyl.API
             //);
 
             config.MapODataServiceRoute("ODataRoute", "odata", GetEdmModel());
-
+            config.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
             config.EnsureInitialized();
         }
 
@@ -36,7 +36,8 @@ namespace AirVinyl.API
             builder.ContainerName = "AirVinylContainer";
 
             builder.EntitySet<Person>("People");
-            builder.EntitySet<VinylRecord>("VinylRecords");
+            //builder.EntitySet<VinylRecord>("VinylRecords");
+            builder.EntitySet<RecordStore>("RecordStores");
 
             return builder.GetEdmModel();
 
