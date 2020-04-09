@@ -143,6 +143,7 @@
     <Compile Include="Controllers\AirVinylController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\RecordStoresController.cs" />
+    <Compile Include="Controllers\SingletonController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
