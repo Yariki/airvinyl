@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Http;
 using AirVinyl.API.Helpers;
 using AirVinyl.DataAccessLayer;
 using AirVinyl.Model;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
+using Microsoft.OData.UriParser;
 
 namespace AirVinyl.API.Controllers
 {
@@ -127,6 +129,82 @@ namespace AirVinyl.API.Controllers
 				return this.CreateOkHttpActionResult(false);
 			}
 		}
+
+		//[HttpGet]
+		//[ODataRoute("RecordStores/AirVinyl.Model.SpecializedRecordStore")]
+		//public IHttpActionResult GetSpecializedRecordStores()
+		//{
+		//	var stores = _ctx.RecordStores.Where(s => s is SpecializedRecordStore);
+		//	return Ok(stores);
+		//}
+
+		//[HttpGet]
+		//[ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+		//public IHttpActionResult GetSpecializedRecordStore([FromODataUri]int key)
+		//{
+		//	var store = _ctx.RecordStores.Where(s => s is SpecializedRecordStore && s.RecordStoreId == key);
+
+		//	if(store == null)
+		//	{
+		//		return NotFound();
+		//	}
+
+		//	return Ok(store.Single());
+		//}
+
+		[HttpPost]
+		[ODataRoute("RecordStores")]
+		public IHttpActionResult Create(RecordStore recordStore)
+		{
+			if(!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			_ctx.RecordStores.Add(recordStore);
+			_ctx.SaveChanges();
+
+			return Create(recordStore);
+		}
+
+		[HttpPatch]
+		[ODataRoute("RecordStores({key})")]
+		//[ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+		public IHttpActionResult Patch([FromODataUri]int key, Delta<RecordStore> patch)
+		{
+			if(!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			var store = _ctx.RecordStores.FirstOrDefault(s => s.RecordStoreId == key);
+			if(store == null)
+			{
+				return NotFound();
+			}
+
+			patch.Patch(store);
+			_ctx.SaveChanges();
+
+			return StatusCode(HttpStatusCode.NoContent);
+		}
+
+		[HttpDelete]
+		[ODataRoute("RecordStores({key})")]
+		//[ODataRoute("RecordStores({key})/AirVinyl.Model.SpecializedRecordStore")]
+		public IHttpActionResult Delete([FromODataUri]int key)
+		{
+			var store = _ctx.RecordStores.Include("Ratings").FirstOrDefault(s => s.RecordStoreId == key);
+			if (store == null)
+				return NotFound();
+
+			store.Ratings.Clear();
+			_ctx.RecordStores.Remove(store);
+			_ctx.SaveChanges();
+
+			return StatusCode(HttpStatusCode.NoContent);
+		}
+
 
 		protected override void Dispose(bool disposing)
 		{

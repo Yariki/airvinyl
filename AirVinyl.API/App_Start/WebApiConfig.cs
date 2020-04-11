@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Services.Protocols;
 using AirVinyl.Model;
+using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.OData.Edm;
@@ -14,18 +15,8 @@ namespace AirVinyl.API
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
-
-            // Web API routes
-            //config.MapHttpAttributeRoutes();
-
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new { id = RouteParameter.Optional }
-            //);
-
-            config.MapODataServiceRoute("ODataRoute", "odata", GetEdmModel());
+            config.MapODataServiceRoute("ODataRoute", "odata", GetEdmModel(),
+	            new DefaultODataBatchHandler(GlobalConfiguration.DefaultServer));
             config.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
             config.EnsureInitialized();
         }
